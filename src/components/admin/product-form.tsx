@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { deleteProduct, saveProduct } from "@/app/yonetim/actions/products";
+import { FreshOnReturn } from "@/components/admin/fresh-on-return";
 import { ImagePicker, useImageUploads } from "@/components/admin/image-picker";
 import type { AdminProductDetail } from "@/lib/queries";
 import type { Category } from "@/lib/types";
@@ -13,14 +14,13 @@ type Props = {
   product?: AdminProductDetail;
 };
 
-/**
- * Next.js (Cache Components) ayrılan sayfaları <Activity> ile gizleyip durumunu saklar. Ürün formu için bu
- * istenmez: çıkışta kaydedilmemiş yüklemeler silinir, geri dönüldüğünde form güncel veriyle sıfırdan açılmalı.
- */
+// Çıkışta kaydedilmemiş yüklemeler silinir; geri dönüldüğünde form eski durumla (silinmiş fotoğraflarla) açılmamalı.
 export function ProductForm(props: Props) {
-  const [generation, setGeneration] = useState(0);
-  useLayoutEffect(() => () => setGeneration((g) => g + 1), []);
-  return <ProductFormInner key={generation} {...props} />;
+  return (
+    <FreshOnReturn>
+      <ProductFormInner {...props} />
+    </FreshOnReturn>
+  );
 }
 
 function ProductFormInner({ categories, product }: Props) {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { instagramUrl, normalizeTrPhone, whatsappLink } from "@/lib/whatsapp";
+import { formatTrPhone, instagramUrl, normalizeTrPhone, whatsappLink } from "@/lib/whatsapp";
 
 describe("normalizeTrPhone", () => {
   test.each(["0532 123 45 67", "+90 (532) 123-45-67", "5321234567", "905321234567"])(
@@ -29,4 +29,14 @@ describe("whatsappLink", () => {
 
 test("instagramUrl baştaki @ işaretini atar", () => {
   expect(instagramUrl("@rose.patisserie.tr")).toBe("https://www.instagram.com/rose.patisserie.tr/");
+});
+
+describe("formatTrPhone", () => {
+  test("905XXXXXXXXX → 0532 123 45 67", () => {
+    expect(formatTrPhone("905321234567")).toBe("0532 123 45 67");
+  });
+  test("boş ya da beklenmeyen değer olduğu gibi döner", () => {
+    expect(formatTrPhone(null)).toBe("");
+    expect(formatTrPhone("12345")).toBe("12345");
+  });
 });

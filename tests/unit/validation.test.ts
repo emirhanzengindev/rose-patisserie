@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { MAX_IMAGES, parseProductInput } from "@/lib/validation";
+import { MAX_IMAGES, parseCategoryName, parseProductInput, parseSettingsInput } from "@/lib/validation";
 
 const CAT = "8d3f1c2a-1b2c-4d5e-8f90-123456789abc";
 const img = (i: number) => ({
@@ -63,5 +63,64 @@ describe("parseProductInput", () => {
 
   test("geçersiz durum reddedilir", () => {
     expect(parseProductInput({ ...base, status: "deleted" }).ok).toBe(false);
+  });
+});
+
+describe("parseSettingsInput", () => {
+  const ok = { whatsapp_number: "", instagram_username: "", tagline: "Her tatlıda küçük bir mutluluk", about_text: "" };
+
+  test.each([
+    ["0532 123 45 67", "905321234567"],
+    ["+90 (532) 123-45-67", "905321234567"],
+    ["5321234567", "905321234567"],
+  ])("WhatsApp %s → %s", (raw, expected) => {
+    const r = parseSettingsInput({ ...ok, whatsapp_number: raw });
+    expect(r.ok && r.data.whatsapp_number).toBe(expected);
+  });
+
+  test("geçersiz numara Türkçe hata verir", () => {
+    expect(parseSettingsInput({ ...ok, whatsapp_number: "123" })).toEqual({
+      ok: false,
+      error: "Geçerli bir cep telefonu numarası girin (ör. 0532 123 45 67).",
+    });
+  });
+
+  test("boş numara ve kullanıcı adı null olur", () => {
+    const r = parseSettingsInput({ ...ok, whatsapp_number: "  ", instagram_username: "" });
+    expect(r.ok && r.data).toMatchObject({ whatsapp_number: null, instagram_username: null });
+  });
+
+  test.each([
+    ["@rose.patisserie.tr", "rose.patisserie.tr"],
+    ["Rose.Patisserie.TR", "rose.patisserie.tr"],
+    ["https://www.instagram.com/rose.patisserie.tr/", "rose.patisserie.tr"],
+    ["instagram.com/rose_pt?igsh=abc", "rose_pt"],
+  ])("Instagram %s → %s", (raw, expected) => {
+    const r = parseSettingsInput({ ...ok, instagram_username: raw });
+    expect(r.ok && r.data.instagram_username).toBe(expected);
+  });
+
+  test("geçersiz Instagram kullanıcı adı reddedilir", () => {
+    expect(parseSettingsInput({ ...ok, instagram_username: "boşluklu ad" }).ok).toBe(false);
+  });
+
+  test("karşılama cümlesi 1–120 karakter", () => {
+    expect(parseSettingsInput({ ...ok, tagline: "  " })).toEqual({ ok: false, error: "Karşılama cümlesi gerekli." });
+    expect(parseSettingsInput({ ...ok, tagline: "a".repeat(121) }).ok).toBe(false);
+    expect(parseSettingsInput({ ...ok, tagline: "a".repeat(120) }).ok).toBe(true);
+  });
+
+  test("hakkında metni en fazla 3000 karakter", () => {
+    expect(parseSettingsInput({ ...ok, about_text: "a".repeat(3001) }).ok).toBe(false);
+    expect(parseSettingsInput({ ...ok, about_text: "a".repeat(3000) }).ok).toBe(true);
+  });
+});
+
+describe("parseCategoryName", () => {
+  test("kırpar ve 1–60 karakter ister", () => {
+    expect(parseCategoryName("  Cheesecake ")).toEqual({ ok: true, data: "Cheesecake" });
+    expect(parseCategoryName("   ")).toEqual({ ok: false, error: "Kategori adı gerekli." });
+    expect(parseCategoryName("a".repeat(61)).ok).toBe(false);
+    expect(parseCategoryName(42).ok).toBe(false);
   });
 });

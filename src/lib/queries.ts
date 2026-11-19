@@ -130,3 +130,16 @@ export async function queryAdminProduct(client: SupabaseClient, id: string): Pro
   const { product_images, ...row } = data;
   return { ...row, images: product_images };
 }
+
+export type AdminCategory = Category & { productCount: number };
+
+export async function queryAdminCategories(client: SupabaseClient): Promise<AdminCategory[]> {
+  const { data, error } = await client
+    .from("categories")
+    .select("id, name, slug, sort_order, products(count)")
+    .order("sort_order")
+    .order("name")
+    .overrideTypes<(Category & { products: { count: number }[] })[], { merge: false }>();
+  if (error) fail("Kategoriler", error);
+  return data.map(({ products, ...c }) => ({ ...c, productCount: products[0]?.count ?? 0 }));
+}

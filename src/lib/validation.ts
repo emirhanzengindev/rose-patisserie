@@ -1,5 +1,6 @@
 import * as z from "zod";
 import type { ActionResult } from "./types";
+import { normalizeTrPhone } from "./whatsapp";
 
 export const MAX_IMAGES = 8;
 
@@ -41,6 +42,68 @@ export type ProductInput = z.infer<typeof productSchema>;
 /** Formdan gelen veriyi doğrular; hata mesajı kullanıcıya gösterilebilir Türkçe metindir. */
 export function parseProductInput(input: unknown): ActionResult<ProductInput> {
   const result = productSchema.safeParse(input);
+  if (result.success) return { ok: true, data: result.data };
+  return { ok: false, error: result.error.issues[0]?.message ?? "Form geçersiz." };
+}
+
+// --- Kategoriler ---
+
+export function parseCategoryName(input: unknown): ActionResult<string> {
+  const result = z
+    .string({ error: "Kategori adı gerekli." })
+    .trim()
+    .min(1, { error: "Kategori adı gerekli." })
+    .max(60, { error: "Kategori adı en fazla 60 karakter olabilir." })
+    .safeParse(input);
+  return result.success ? { ok: true, data: result.data } : { ok: false, error: result.error.issues[0].message };
+}
+
+// --- Site ayarları ---
+
+const PHONE_ERROR = "Geçerli bir cep telefonu numarası girin (ör. 0532 123 45 67).";
+const INSTAGRAM_ERROR = "Geçerli bir Instagram kullanıcı adı girin (ör. rose.patisserie.tr).";
+
+/** "@ad", "ad" ya da profil bağlantısından kullanıcı adını çıkarır. */
+function instagramHandle(raw: string): string {
+  return raw
+    .trim()
+    .replace(/^(https?:\/\/)?(www\.)?instagram\.com\//i, "")
+    .replace(/[/?#].*$/, "")
+    .replace(/^@/, "")
+    .toLowerCase();
+}
+
+export const settingsSchema = z.object({
+  whatsapp_number: z
+    .string()
+    .default("")
+    .transform((raw, ctx) => {
+      if (!raw.trim()) return null;
+      const phone = normalizeTrPhone(raw);
+      if (!phone) ctx.addIssue({ code: "custom", message: PHONE_ERROR });
+      return phone;
+    }),
+  instagram_username: z
+    .string()
+    .default("")
+    .transform((raw, ctx) => {
+      const handle = instagramHandle(raw);
+      if (!handle) return null;
+      if (!/^[a-z0-9._]{1,30}$/.test(handle)) ctx.addIssue({ code: "custom", message: INSTAGRAM_ERROR });
+      return handle;
+    }),
+  tagline: z
+    .string({ error: "Karşılama cümlesi gerekli." })
+    .trim()
+    .min(1, { error: "Karşılama cümlesi gerekli." })
+    .max(120, { error: "Karşılama cümlesi en fazla 120 karakter olabilir." }),
+  about_text: z.string().trim().max(3000, { error: "Hakkında metni en fazla 3000 karakter olabilir." }).default(""),
+});
+
+export type SettingsInput = z.infer<typeof settingsSchema>;
+
+export function parseSettingsInput(input: unknown): ActionResult<SettingsInput> {
+  const result = settingsSchema.safeParse(input);
   if (result.success) return { ok: true, data: result.data };
   return { ok: false, error: result.error.issues[0]?.message ?? "Form geçersiz." };
 }
