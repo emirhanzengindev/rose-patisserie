@@ -1,4 +1,11 @@
 export const ADMIN_LOGIN_PATH = "/yonetim/giris";
+export const ADMIN_HOME_PATH = "/yonetim";
+
+/** Girişten/e-posta bağlantısından sonra gidilecek yol: yalnızca site içi, mutlak yollar (açık yönlendirme yok). */
+export function safeNextPath(raw: string | null | undefined): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return ADMIN_HOME_PATH;
+  return raw;
+}
 
 const PUBLIC_ADMIN_PATHS = [ADMIN_LOGIN_PATH, "/yonetim/sifre-yenile"];
 

@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -23,11 +21,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="tr" className="h-full">
-      <body className="flex min-h-full flex-col">
-        <SiteHeader />
-        <div className="flex-1">{children}</div>
-        <SiteFooter />
-      </body>
+      {/* Ziyaretçi çerçevesi (site)/layout.tsx'te; yönetim paneli kendi çerçevesini kullanır. */}
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

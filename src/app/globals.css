@@ -10,6 +10,7 @@
   --accent: #a8505f;
   --accent-text: #ffffff;
   --gold: #b08d4f;
+  --danger: #b3261e;
   --line: rgba(58, 42, 38, 0.1);
   --glass-bg: rgba(251, 246, 241, 0.72);
   --glass-border: rgba(255, 255, 255, 0.5);
@@ -26,6 +27,7 @@
     --accent: #e59aa8;
     --accent-text: #1c1514;
     --gold: #d4b37a;
+    --danger: #f2b8b5;
     --line: rgba(245, 236, 230, 0.1);
     --glass-bg: rgba(28, 21, 20, 0.72);
     --glass-border: rgba(255, 255, 255, 0.08);
@@ -42,6 +44,7 @@
   --color-accent: var(--accent);
   --color-accent-text: var(--accent-text);
   --color-gold: var(--gold);
+  --color-danger: var(--danger);
   --color-line: var(--line);
   --font-sans: system-ui, -apple-system, sans-serif;
 }

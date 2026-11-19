@@ -28,6 +28,9 @@ export type ProductDetail = ProductCard & {
   images: ProductImage[];
 };
 
+/** Server Action sonucu; `error` kullanıcıya gösterilebilir Türkçe metindir. */
+export type ActionResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
 export type SiteSettings = {
   whatsapp_number: string | null;
   instagram_username: string | null;

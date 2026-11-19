@@ -82,3 +82,51 @@ export async function querySettings(client: SupabaseClient): Promise<SiteSetting
   if (error) fail("Site ayarları", error);
   return data;
 }
+
+// --- Yönetim (oturumlu istemciyle; RLS admin'e taslakları da gösterir) ---
+
+export type AdminProductRow = {
+  id: string;
+  title: string;
+  slug: string;
+  status: "published" | "draft";
+  category: { name: string };
+  cover: { path_thumb: string } | null;
+};
+
+export async function queryAdminProducts(client: SupabaseClient): Promise<AdminProductRow[]> {
+  const { data, error } = await client
+    .from("products")
+    .select("id, title, slug, status, category:categories!inner(name), product_images(path_thumb)")
+    .order("updated_at", { ascending: false })
+    .order("sort_order", { referencedTable: "product_images" })
+    .limit(1, { referencedTable: "product_images" })
+    .limit(500)
+    .overrideTypes<(Omit<AdminProductRow, "cover"> & { product_images: { path_thumb: string }[] })[], { merge: false }>();
+  if (error) fail("Ürünler", error);
+  return data.map(({ product_images, ...row }) => ({ ...row, cover: product_images[0] ?? null }));
+}
+
+export type AdminProductDetail = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category_id: string;
+  status: "published" | "draft";
+  images: ProductImage[];
+};
+
+export async function queryAdminProduct(client: SupabaseClient, id: string): Promise<AdminProductDetail | null> {
+  const { data, error } = await client
+    .from("products")
+    .select(`id, title, slug, description, category_id, status, product_images(${IMAGE_COLS})`)
+    .eq("id", id)
+    .order("sort_order", { referencedTable: "product_images" })
+    .maybeSingle()
+    .overrideTypes<Omit<AdminProductDetail, "images"> & { product_images: ProductImage[] }, { merge: false }>();
+  if (error) fail("Ürün", error);
+  if (!data) return null;
+  const { product_images, ...row } = data;
+  return { ...row, images: product_images };
+}
