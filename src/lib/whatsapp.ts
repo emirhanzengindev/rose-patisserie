@@ -1,0 +1,19 @@
+/** Türkiye cep numarasını `905XXXXXXXXX` biçimine getirir; geçersizse null. */
+export function normalizeTrPhone(raw: string): string | null {
+  let digits = raw.replace(/\D/g, "");
+  if (digits.length === 11 && digits.startsWith("0")) digits = `9${digits}`;
+  else if (digits.length === 10 && digits.startsWith("5")) digits = `90${digits}`;
+  return digits.length === 12 && digits.startsWith("905") ? digits : null;
+}
+
+/** Ürün adıyla hazır yazılmış WhatsApp sohbet bağlantısı. */
+export function whatsappLink(phone: string, productTitle?: string, productUrl?: string): string {
+  const text = productTitle
+    ? `Merhaba, *${productTitle}* hakkında bilgi almak istiyorum.${productUrl ? `\n${productUrl}` : ""}`
+    : "Merhaba, bilgi almak istiyorum.";
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
+export function instagramUrl(username: string): string {
+  return `https://www.instagram.com/${username.replace(/^@/, "")}/`;
+}
