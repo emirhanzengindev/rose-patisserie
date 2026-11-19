@@ -2,7 +2,7 @@
 
 Bursa'da ev yapımı tatlılar hazırlayan Rose Patisserie için vitrin sitesi. Ziyaretçiler ürünleri gezer, siparişi WhatsApp ya da Instagram'dan verir. İşletme sahibi ürünleri telefondan, `/yonetim` panelinden kendisi ekler.
 
-**Canlı:** https://rose-patisserie-five.vercel.app
+**Canlı:** https://rosepatisserie.com.tr
 
 ## Özellikler
 

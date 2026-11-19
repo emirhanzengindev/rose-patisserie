@@ -6,14 +6,14 @@ Bursa'daki ev yapımı pastane Rose Patisserie için vitrin sitesi. Ziyaretçi �
 
 - Spec: `docs/superpowers/specs/2026-11-19-rose-patisserie-design.md`
 - Plan: `docs/superpowers/plans/2026-11-19-rose-patisserie.md`
-- Canlı: https://rose-patisserie-five.vercel.app (Vercel projesi `rose-patisserie`; Supabase projesi `ofpmazigustfljilgpui`, eu-central-1)
+- Canlı: https://rosepatisserie.com.tr (DNS Turkticaret'te: `@` için A kayıtları 216.198.79.1 / 64.29.17.1, `www` için CNAME Vercel'e; `www` → ana adres yönlendirmesi `vercel.json`'da). Eski adres https://rose-patisserie-five.vercel.app de çalışır, ama `vercel.app` Türkiye'de bazı ağlarda engelli. (Vercel projesi `rose-patisserie`; Supabase projesi `ofpmazigustfljilgpui`, eu-central-1)
 
 ## Komutlar
 
 - Geliştirme: `npm run dev`
 - Birim testleri: `npm test`
 - RLS / veri testleri (canlı Supabase, `.env.local` gerekir): `npm run test:rls`
-- Uçtan uca (Playwright, iPhone 14 / WebKit): önce `npm run build`, sonra `E2E_ADMIN_EMAIL=… E2E_ADMIN_PASSWORD=… npm run e2e`. Canlıya karşı: `E2E_BASE_URL=https://rose-patisserie-five.vercel.app`. Test admini `npx tsx scripts/create-admin.ts <email> <şifre>` ile açılır ve iş bitince silinir.
+- Uçtan uca (Playwright, iPhone 14 / WebKit): önce `npm run build`, sonra `E2E_ADMIN_EMAIL=… E2E_ADMIN_PASSWORD=… npm run e2e`. Canlıya karşı: `E2E_BASE_URL=https://rosepatisserie.com.tr`. Test admini `npx tsx scripts/create-admin.ts <email> <şifre>` ile açılır ve iş bitince silinir.
 - Admin oluşturma: `npx tsx scripts/create-admin.ts <email> <şifre>`
 - Derleme: `npm run build`
 - Yayın: `main` dalına `git push` → Vercel otomatik yayınlar (depo: github.com/emirhanzengindev/rose-patisserie). Elle yükleme gerekirse: `npx vercel deploy --prod`.

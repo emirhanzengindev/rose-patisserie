@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "crons": [{ "path": "/api/cron/keepalive", "schedule": "0 6 * * *" }]
+  "crons": [{ "path": "/api/cron/keepalive", "schedule": "0 6 * * *" }],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.rosepatisserie.com.tr" }],
+      "destination": "https://rosepatisserie.com.tr/:path*",
+      "permanent": true
+    }
+  ]
 }
