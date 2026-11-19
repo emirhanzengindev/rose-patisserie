@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/* Renkler logodan tahmin edildi; logo dosyası gelince yeniden örneklenecek.
+   Tüm metin/zemin çiftleri en az 4.5:1 kontrast sağlar. */
+:root {
+  --bg: #fbf6f1;
+  --surface: #ffffff;
+  --text: #3a2a26;
+  --text-muted: #6e5a55;
+  --accent: #a8505f;
+  --accent-text: #ffffff;
+  --gold: #b08d4f;
+  --line: rgba(58, 42, 38, 0.1);
+  --glass-bg: rgba(251, 246, 241, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --shadow-soft: 0 1px 2px rgba(58, 42, 38, 0.06), 0 8px 24px rgba(58, 42, 38, 0.06);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1514;
+    --surface: #261d1b;
+    --text: #f5ece6;
+    --text-muted: #c2b1aa;
+    --accent: #e59aa8;
+    --accent-text: #1c1514;
+    --gold: #d4b37a;
+    --line: rgba(245, 236, 230, 0.1);
+    --glass-bg: rgba(28, 21, 20, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-gold: var(--gold);
+  --color-line: var(--line);
+  --font-sans: system-ui, -apple-system, sans-serif;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font: 100%/1.5 system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Büyük başlık: boyuta özgü harf aralığı, sıkı satır aralığı. */
+.display {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  font-optical-sizing: auto;
+}
+
+/* Küçük metinlerde hafif pozitif harf aralığı. */
+.caption {
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+}
+
+/* Buzlu cam malzeme. */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Basınca anında küçülme (pointer-down, bırakmayı beklemez). */
+.pressable {
+  transition: transform 100ms ease-out;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.pressable:active {
+  transform: scale(0.97);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .pressable:active {
+    transition: none;
+    transform: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--bg);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .glass {
+    background: var(--bg);
+    border-bottom: 1px solid var(--text);
+  }
+}
