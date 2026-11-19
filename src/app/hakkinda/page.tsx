@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ContactButtons } from "@/components/contact-buttons";
 import { getSettings } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -18,7 +19,9 @@ export default async function AboutPage() {
       <h1 className="display">Hakkında</h1>
       <p className="caption mt-3 font-medium tracking-[0.04em] text-gold uppercase">Bursa · Yıldırım</p>
       <div className="mt-6 text-lg leading-relaxed whitespace-pre-line">{about}</div>
-      {/* İletişim butonları Task 6'daki ContactButtons ile buraya gelir. */}
+      <div className="mt-10">
+        <ContactButtons settings={settings} />
+      </div>
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import { Pressable } from "@/components/pressable";
 import { formatDateTr } from "@/lib/format";
 import { fitWithin } from "@/lib/image";
@@ -6,6 +7,8 @@ import { publicImageUrl } from "@/lib/storage";
 import type { ProductCard as ProductCardData } from "@/lib/types";
 
 const THUMB_MAX = 640;
+
+export const coverTransitionName = (slug: string) => `cover-${slug}`;
 
 export function ProductCard({ product }: { product: ProductCardData }) {
   const { cover } = product;
@@ -15,17 +18,20 @@ export function ProductCard({ product }: { product: ProductCardData }) {
     <Pressable as={Link} href={`/urun/${product.slug}`} className="group block rounded-2xl">
       <div className="aspect-square overflow-hidden rounded-2xl bg-surface shadow-[var(--shadow-soft)]">
         {cover && size ? (
-          // Fotoğraflar yüklenirken zaten küçültülüp WebP yapılıyor; next/image optimizasyonu gerekmez.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={publicImageUrl(cover.path_thumb)}
-            alt={product.title}
-            width={size.width}
-            height={size.height}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover"
-          />
+          // Ürün sayfasındaki galerinin ilk fotoğrafıyla aynı ad: kapak yerinden büyüyerek geçer.
+          <ViewTransition name={coverTransitionName(product.slug)} share="morph" default="none">
+            {/* Fotoğraflar yüklenirken zaten küçültülüp WebP yapılıyor; next/image optimizasyonu gerekmez. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={publicImageUrl(cover.path_thumb)}
+              alt={product.title}
+              width={size.width}
+              height={size.height}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          </ViewTransition>
         ) : (
           <div
             data-testid="cover-placeholder"

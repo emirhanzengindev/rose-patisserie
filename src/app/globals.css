@@ -107,6 +107,12 @@ body {
   }
 }
 
+/* Karttan ürün sayfasına geçişte kapak fotoğrafı yerinden büyür (bounce'suz yay hissi). */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
 @media (prefers-reduced-transparency: reduce) {
   .glass {
     background: var(--bg);
