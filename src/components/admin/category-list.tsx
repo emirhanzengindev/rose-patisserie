@@ -20,7 +20,6 @@ export function CategoryList({ categories }: { categories: AdminCategory[] }) {
 
 function CategoryListInner({ categories }: { categories: AdminCategory[] }) {
   const [rows, setRows] = useState<Row[]>(() => categories.map(toRow));
-  const [newName, setNewName] = useState("");
   const [listError, setListError] = useState<string | null>(null);
   const [adding, startAdding] = useTransition();
   const [, startTransition] = useTransition();
@@ -79,14 +78,17 @@ function CategoryListInner({ categories }: { categories: AdminCategory[] }) {
     });
   }
 
-  function add(e: FormEvent) {
+  // Alan kontrolsüz: sayfa JS'i yüklenmeden yazılan metin de kaybolmaz (yavaş bağlantıda telefon).
+  function add(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const name = String(new FormData(form).get("name") ?? "");
     setListError(null);
     startAdding(async () => {
-      const result = await saveCategory({ name: newName });
+      const result = await saveCategory({ name });
       if (!result.ok) return setListError(result.error);
       setRows((list) => [...list, toRow({ ...result.data, productCount: 0 })]);
-      setNewName("");
+      form.reset();
     });
   }
 
@@ -133,8 +135,7 @@ function CategoryListInner({ categories }: { categories: AdminCategory[] }) {
         </label>
         <input
           id="new-category"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
+          name="name"
           placeholder="Yeni kategori (ör. Cupcake)"
           maxLength={60}
           autoComplete="off"
@@ -143,7 +144,7 @@ function CategoryListInner({ categories }: { categories: AdminCategory[] }) {
         />
         <button
           type="submit"
-          disabled={adding || !newName.trim()}
+          disabled={adding}
           className="pressable min-h-12 shrink-0 rounded-full bg-accent px-5 font-semibold text-accent-text disabled:opacity-50"
         >
           {adding ? "Ekleniyor…" : "Ekle"}
