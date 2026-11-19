@@ -16,7 +16,7 @@ Bursa'daki ev yapımı pastane Rose Patisserie için vitrin sitesi. Ziyaretçi �
 - Uçtan uca (Playwright, iPhone 14 / WebKit): önce `npm run build`, sonra `E2E_ADMIN_EMAIL=… E2E_ADMIN_PASSWORD=… npm run e2e`. Canlıya karşı: `E2E_BASE_URL=https://rose-patisserie-five.vercel.app`. Test admini `npx tsx scripts/create-admin.ts <email> <şifre>` ile açılır ve iş bitince silinir.
 - Admin oluşturma: `npx tsx scripts/create-admin.ts <email> <şifre>`
 - Derleme: `npm run build`
-- Yayın: `npx vercel deploy --prod` (git'e bağlı değil; yerel dosyalardan yükler)
+- Yayın: `main` dalına `git push` → Vercel otomatik yayınlar (depo: github.com/emirhanzengindev/rose-patisserie). Elle yükleme gerekirse: `npx vercel deploy --prod`.
 
 ## Kurallar
 
